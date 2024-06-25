@@ -20,6 +20,5 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
 int main() {
   assert(batteryIsOk(25, 70, 0.7));
   assert(!batteryIsOk(50, 85, 0));
-  printf("All tests passed.\n");
   return 0;
 }
