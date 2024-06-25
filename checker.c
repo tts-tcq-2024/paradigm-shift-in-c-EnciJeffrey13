@@ -9,14 +9,11 @@ int main() {
     int isSocInRange1 = (soc1 >= 20 && soc1 <= 80); 
     int isChargeRateInRange1 = (chargeRate1 <= 0.8); 
 
-    if (!isTemperatureInRange1) { 
-        printf("Temperature out of range!\n"); 
-    } 
-    if (!isSocInRange1) { 
-        printf("State of Charge out of range!\n"); 
-    } 
-    if (!isChargeRateInRange1) { 
-        printf("Charge Rate out of range!\n"); 
+    if (!isTemperatureInRange1 || !isSocInRange1 || !isChargeRateInRange1) { 
+        printf("%s%s%s", 
+               !isTemperatureInRange1 ? "Temperature out of range!\n" : "", 
+               !isSocInRange1 ? "State of Charge out of range!\n" : "", 
+               !isChargeRateInRange1 ? "Charge Rate out of range!\n" : "");
     } 
 
     assert(isTemperatureInRange1 && isSocInRange1 && isChargeRateInRange1);
