@@ -3,18 +3,25 @@
 
 int batteryIsOk(float temperature, float soc, float chargeRate) {
     int isOk = 1;
+    const char *errorMessages[3] = { NULL, NULL, NULL };
 
     if (temperature < 0 || temperature > 45) {
-        printf("Temperature out of range!\n");
+        errorMessages[0] = "Temperature out of range!\n";
         isOk = 0;
     }
     if (soc < 20 || soc > 80) {
-        printf("State of Charge out of range!\n");
+        errorMessages[1] = "State of Charge out of range!\n";
         isOk = 0;
     }
     if (chargeRate > 0.8) {
-        printf("Charge Rate out of range!\n");
+        errorMessages[2] = "Charge Rate out of range!\n";
         isOk = 0;
+    }
+
+    for (int i = 0; i < 3; ++i) {
+        if (errorMessages[i] != NULL) {
+            printf("%s", errorMessages[i]);
+        }
     }
 
     return isOk;
