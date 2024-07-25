@@ -1,5 +1,6 @@
 #include "batterycheck.h"
 #include <stdio.h>
+ include <string.h>
 
 static const float TEMP_UPPER_LIMIT = 45.0;
 static const float TEMP_LOWER_LIMIT = 0.0;
