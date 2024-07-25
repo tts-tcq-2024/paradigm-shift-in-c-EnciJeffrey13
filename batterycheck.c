@@ -1,4 +1,4 @@
-#include "batteryCheck.h"
+#include "batterycheck.h"
 #include <stdio.h>
 
 const char* getErrorMessage(BatteryStatus status) {
