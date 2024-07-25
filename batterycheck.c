@@ -1,14 +1,5 @@
+#include "batteryCheck.h"
 #include <stdio.h>
-#include <assert.h>
-
-typedef enum {
-    TEMP_OK,
-    SOC_OK,
-    CHARGE_OK,
-    TEMP_OUT_OF_RANGE,
-    SOC_OUT_OF_RANGE,
-    CHARGE_OUT_OF_RANGE
-} BatteryStatus;
 
 const char* getErrorMessage(BatteryStatus status) {
     switch (status) {
@@ -43,10 +34,4 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
         return 0;
     }
     return 1;
-}
-
-int main() {
-    assert(batteryIsOk(25, 70, 0.7));
-    assert(!batteryIsOk(50, 85, 0));
-    return 0;
 }
