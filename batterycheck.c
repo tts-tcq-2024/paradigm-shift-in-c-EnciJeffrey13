@@ -1,4 +1,4 @@
-#include "batteryCheck.h"
+#include "batterycheck.h"
 #include <stdio.h>
 
 static const float TEMP_UPPER_LIMIT = 45.0;
