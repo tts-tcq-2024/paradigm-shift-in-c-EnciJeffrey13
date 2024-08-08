@@ -31,7 +31,7 @@ typedef struct {
     float max;
     float warning_tolerance;
     bool enable_warning;
-} Parameter_Config;
+} ParameterConfig;
 
 
 #endif /*BATTERY_STATUS_H */
