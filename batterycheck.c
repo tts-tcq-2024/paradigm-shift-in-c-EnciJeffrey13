@@ -2,20 +2,20 @@
 #include <stdbool.h>
 #include "batterycheck.h"
 
-Parameter_Config SoC = {20, 80, 0.05, true};
-Parameter_Config Temperature = {0, 45, 0.05, true};
-Parameter_Config Charge_rate = {0, 0.8, 0.05, true};  
+ParameterConfig SoC = {20, 80, 0.05, true};
+ParameterConfig Temperature = {0, 45, 0.05, true};
+ParameterConfig Charge_rate = {0, 0.8, 0.05, true};  
 
-int check_low_limit(float value, Parameter_Config config) {  
+int check_low_limit(float value, ParameterConfig config) {  
     return (value < config.min) ? 3 : 0;
 } 
 
-int check_high_limit(float value, Parameter_Config config) {
+int check_high_limit(float value, ParameterConfig config) {
     return (value > config.max) ? 4 : 0;
 }
 
 
-int check_warning(float value, Parameter_Config config) {
+int check_warning(float value, ParameterConfig config) {
     
     float warning_min = config.min + (config.max * config.warning_tolerance);
     float warning_max = config.max - (config.max * config.warning_tolerance);
@@ -28,7 +28,7 @@ int check_warning(float value, Parameter_Config config) {
     return 0;  // Default to "Normal"
 }
 
-int get_message_index(float value, Parameter_Config config) {
+int get_message_index(float value, ParameterConfig config) {
     int message_index = 0;
     message_index = check_low_limit(value, config);
     if (message_index != 0) {
@@ -41,7 +41,7 @@ int get_message_index(float value, Parameter_Config config) {
     return check_warning(value, config);
 }
 
-void check_parameter(const char* param_name, float value, Parameter_Config config) {
+void check_parameter(const char* param_name, float value, ParameterConfig config) {
     int message_index = get_message_index(value, config);
     printf("%s: %s\n", param_name, messages[language][message_index]);
 }
