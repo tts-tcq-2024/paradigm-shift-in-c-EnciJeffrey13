@@ -1,20 +1,43 @@
-#ifndef BATTERY_CHECK_H
-#define BATTERY_CHECK_H
+#ifndef BATTERY_STATUS_H
+#define BATTERY_STATUS_H
 
+#include <stdbool.h>
+
+// Language enumeration
 typedef enum {
-    OK,
-    TEMP_WARNING,
-    TEMP_OUT_OF_RANGE,
-    SOC_WARNING,
-    SOC_OUT_OF_RANGE,
-    CHARGE_WARNING,
-    CHARGE_OUT_OF_RANGE
-} BatteryStatus;
+    EN,
+    DE
+} Language;
 
-const char* getErrorMessage(BatteryStatus status, const char* language);
-BatteryStatus checkTemperature(float temperature);
-BatteryStatus checkSoc(float soc);
-BatteryStatus checkChargeRate(float chargeRate);
-int batteryIsOk(float temperature, float soc, float chargeRate);
+// Global language variable, default to English
+Language language = EN;
 
-#endif
+// Messages in both languages
+const char* messages[2][5] = {
+    // EN
+    {
+        "Normal",
+        "Warning: Approaching discharge",
+        "Warning: Approaching charge-peak",
+        "Alarm: Low limit breached",
+        "Alarm: High limit breached"
+    },
+    // DE
+    {
+        "Normal",
+        "Warnung: Entladung nähert sich",
+        "Warnung: Ladehöhe nähert sich",
+        "Alarm: Untergrenze überschritten",
+        "Alarm: Obergrenze überschritten"
+    }
+};
+
+// Configuration structure for parameter limits and warning levels
+typedef struct {
+    float min;
+    float max;
+    float warning_tolerance;
+    bool enable_warning;
+} ParameterConfig;
+
+#endif // BATTERY_STATUS_H
