@@ -8,7 +8,7 @@ ParameterConfig Charge_rate = {0, 0.8, 0.05, true};
 
 int check_low_limit(float value, ParameterConfig config) {
     return (value < config.min) ? 3 : 0;
-}
+} 
 
 int check_high_limit(float value, ParameterConfig config) {
     return (value > config.max) ? 4 : 0;
