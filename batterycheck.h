@@ -6,7 +6,7 @@
 // Language enumeration
 typedef enum {
     EN,
-    DE
+    DE 
 } Language;  
 
 // Global language variable, default to English
