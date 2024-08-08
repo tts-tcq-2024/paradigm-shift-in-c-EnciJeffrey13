@@ -6,7 +6,7 @@ Parameter_Config SoC = {20, 80, 0.05, true};
 Parameter_Config Temperature = {0, 45, 0.05, true};
 Parameter_Config Charge_rate = {0, 0.8, 0.05, true};  
 
-int check_low_limit(float value, Parameter_Config config) {
+int check_low_limit(float value, Parameter_Config config) {  
     return (value < config.min) ? 3 : 0;
 } 
 
