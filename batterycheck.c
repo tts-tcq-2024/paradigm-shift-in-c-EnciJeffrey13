@@ -1,82 +1,61 @@
-#include "batterycheck.h"
 #include <stdio.h>
- include <string.h>
+#include <stdbool.h>
+#include "battery_status.h"
 
-static const float TEMP_UPPER_LIMIT = 45.0;
-static const float TEMP_LOWER_LIMIT = 0.0;
-static const float SOC_UPPER_LIMIT = 80.0;
-static const float SOC_LOWER_LIMIT = 20.0;
-static const float CHARGE_RATE_UPPER_LIMIT = 0.8;
+typedef struct {
+    float min;
+    float max;
+    float warning_tolerance;
+    bool enable_warning;
+} ParameterConfig;
 
-static const float TEMP_WARNING_DELTA = TEMP_UPPER_LIMIT * 0.05;
-static const float SOC_WARNING_DELTA = SOC_UPPER_LIMIT * 0.05;
-static const float CHARGE_RATE_WARNING_DELTA = CHARGE_RATE_UPPER_LIMIT * 0.05;
+ParameterConfig SoC = {20, 80, 0.05, true};
+ParameterConfig Temperature = {0, 45, 0.05, true};
+ParameterConfig Charge_rate = {0, 0.8, 0.05, true};
 
-const char* getErrorMessage(BatteryStatus status, const char* language) {
-    if (strcmp(language, "DE") == 0) {
-        switch (status) {
-            case TEMP_OUT_OF_RANGE:
-                return "Temperatur außerhalb des Bereichs!\n";
-            case SOC_OUT_OF_RANGE:
-                return "Ladezustand außerhalb des Bereichs!\n";
-            case CHARGE_OUT_OF_RANGE:
-                return "Laderate außerhalb des Bereichs!\n";
-            case TEMP_WARNING:
-                return "Warnung: Annäherung an Temperaturgrenze!\n";
-            case SOC_WARNING:
-                return "Warnung: Annäherung an Ladezustandsgrenze!\n";
-            case CHARGE_WARNING:
-                return "Warnung: Annäherung an Laderategrenze!\n";
-            default:
-                return "";
-        }
-    } else {
-        switch (status) {
-            case TEMP_OUT_OF_RANGE:
-                return "Temperature out of range!\n";
-            case SOC_OUT_OF_RANGE:
-                return "State of Charge out of range!\n";
-            case CHARGE_OUT_OF_RANGE:
-                return "Charge Rate out of range!\n";
-            case TEMP_WARNING:
-                return "Warning: Approaching temperature limit!\n";
-            case SOC_WARNING:
-                return "Warning: Approaching state of charge limit!\n";
-            case CHARGE_WARNING:
-                return "Warning: Approaching charge rate limit!\n";
-            default:
-                return "";
-        }
+enum {
+    NORMAL = 0,
+    WARNING_LOW,
+    WARNING_HIGH,
+    ERROR_LOW,
+    ERROR_HIGH
+};
+
+const char* messages[2][5] = {
+    {"Normal", "Warning: Approaching discharge", "Warning: Approaching charge-peak", "Error: Too low", "Error: Too high"},
+    // Add messages for other languages if needed
+};
+
+int check_value(float value, ParameterConfig config) {
+    if (value < config.min) return ERROR_LOW;
+    if (value > config.max) return ERROR_HIGH;
+
+    float warning_range = config.max * config.warning_tolerance;
+    if (config.enable_warning) {
+        if (value < config.min + warning_range) return WARNING_LOW;
+        if (value > config.max - warning_range) return WARNING_HIGH;
     }
+
+    return NORMAL;
 }
 
-BatteryStatus checkBattery(float temperature, float soc, float chargeRate) {
-    if (temperature < TEMP_LOWER_LIMIT || temperature > TEMP_UPPER_LIMIT) {
-        return TEMP_OUT_OF_RANGE;
-    } else if (temperature > TEMP_UPPER_LIMIT - TEMP_WARNING_DELTA || temperature < TEMP_LOWER_LIMIT + TEMP_WARNING_DELTA) {
-        return TEMP_WARNING;
-    }
-
-    if (soc < SOC_LOWER_LIMIT || soc > SOC_UPPER_LIMIT) {
-        return SOC_OUT_OF_RANGE;
-    } else if (soc > SOC_UPPER_LIMIT - SOC_WARNING_DELTA || soc < SOC_LOWER_LIMIT + SOC_WARNING_DELTA) {
-        return SOC_WARNING;
-    }
-
-    if (chargeRate > CHARGE_RATE_UPPER_LIMIT) {
-        return CHARGE_OUT_OF_RANGE;
-    } else if (chargeRate > CHARGE_RATE_UPPER_LIMIT - CHARGE_RATE_WARNING_DELTA) {
-        return CHARGE_WARNING;
-    }
-
-    return TEMP_OK;
+void check_parameter(const char* param_name, float value, ParameterConfig config) {
+    int message_index = check_value(value, config);
+    printf("%s: %s\n", param_name, messages[0][message_index]);
 }
 
-int batteryIsOk(float temperature, float soc, float chargeRate) {
-    BatteryStatus status = checkBattery(temperature, soc, chargeRate);
-    if (status != TEMP_OK) {
-        printf("%s", getErrorMessage(status, "EN"));
-        return 0;
-    }
-    return 1;
+int main() {
+    // Example current values for parameters
+    float current_SoC = 86;
+    float current_Temperature = 43;
+    float current_Charge_rate = 0.7;
+
+    // Check each parameter
+    printf("Checking parameters with current values:\n");
+
+    check_parameter("SoC", current_SoC, SoC);
+    check_parameter("Temperature", current_Temperature, Temperature);
+    check_parameter("Charge_rate", current_Charge_rate, Charge_rate);
+
+    return 0;
 }
