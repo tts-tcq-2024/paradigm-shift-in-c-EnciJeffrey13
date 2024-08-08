@@ -1,19 +1,12 @@
 #ifndef BATTERY_STATUS_H
 #define BATTERY_STATUS_H
 
-#include <stdbool.h>
-
-// Language enumeration
-typedef enum {
-    EN,
-    DE 
-} Language;  
-
-// Global language variable, default to English
-Language language = EN;
+// Global language variable
+enum Language { EN, DE };
+enum Language language = 1;  // Default to English
 
 // Messages in both languages
-const char* messages[2][5] = {
+const char *messages[2][5] = {
     // EN
     {
         "Normal",
@@ -32,7 +25,7 @@ const char* messages[2][5] = {
     }
 };
 
-// Configuration structure for parameter limits and warning levels
+// Configuration for parameter limits and warning levels
 typedef struct {
     float min;
     float max;
@@ -40,4 +33,5 @@ typedef struct {
     bool enable_warning;
 } ParameterConfig;
 
-#endif // BATTERY_STATUS_H
+
+#endif /*BATTERY_STATUS_H */
