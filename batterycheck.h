@@ -4,7 +4,7 @@
 // Global language variable
 enum Language { EN, DE };
 enum Language language = 1;  // Default to English
- 
+  
 // Messages in both languages
 const char *messages[2][5] = {
     // EN
