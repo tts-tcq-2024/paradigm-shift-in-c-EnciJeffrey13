@@ -2,46 +2,48 @@
 #include <stdbool.h>
 #include "battery_status.h"
 
-typedef struct {
-    float min;
-    float max;
-    float warning_tolerance;
-    bool enable_warning;  
-} ParameterConfig;   
-
 ParameterConfig SoC = {20, 80, 0.05, true};
 ParameterConfig Temperature = {0, 45, 0.05, true};
 ParameterConfig Charge_rate = {0, 0.8, 0.05, true};
 
-enum {
-    NORMAL = 0,
-    WARNING_LOW,
-    WARNING_HIGH,
-    ERROR_LOW,
-    ERROR_HIGH
-};
+int check_low_limit(float value, ParameterConfig config) {
+    return (value < config.min) ? 3 : 0;
+}
 
-const char* messages[2][5] = {
-    {"Normal", "Warning: Approaching discharge", "Warning: Approaching charge-peak", "Error: Too low", "Error: Too high"},
-    // Add messages for other languages if needed
-};
+int check_high_limit(float value, ParameterConfig config) {
+    return (value > config.max) ? 4 : 0;
+}
 
-int check_value(float value, ParameterConfig config) {
-    if (value < config.min) return ERROR_LOW;
-    if (value > config.max) return ERROR_HIGH;
 
-    float warning_range = config.max * config.warning_tolerance;
-    if (config.enable_warning) {
-        if (value < config.min + warning_range) return WARNING_LOW;
-        if (value > config.max - warning_range) return WARNING_HIGH;
+int check_warning(float value, ParameterConfig config) {
+    
+    float warning_min = config.min + (config.max * config.warning_tolerance);
+    float warning_max = config.max - (config.max * config.warning_tolerance);
+    if (value < warning_min) {
+        return 1;  // Warning: Approaching discharge
     }
+    if (value > warning_max) {
+        return 2;  // Warning: Approaching charge-peak
+    }
+    return 0;  // Default to "Normal"
+}
 
-    return NORMAL;
+int get_message_index(float value, ParameterConfig config) {
+    int message_index = 0;
+    message_index = check_low_limit(value, config);
+    if (message_index != 0) {
+        return message_index;
+    }
+    message_index = check_high_limit(value, config);
+    if (message_index != 0) {
+        return message_index;
+    }
+    return check_warning(value, config);
 }
 
 void check_parameter(const char* param_name, float value, ParameterConfig config) {
-    int message_index = check_value(value, config);
-    printf("%s: %s\n", param_name, messages[0][message_index]);
+    int message_index = get_message_index(value, config);
+    printf("%s: %s\n", param_name, messages[language][message_index]);
 }
 
 int main() {
@@ -52,7 +54,7 @@ int main() {
 
     // Check each parameter
     printf("Checking parameters with current values:\n");
-
+    
     check_parameter("SoC", current_SoC, SoC);
     check_parameter("Temperature", current_Temperature, Temperature);
     check_parameter("Charge_rate", current_Charge_rate, Charge_rate);
