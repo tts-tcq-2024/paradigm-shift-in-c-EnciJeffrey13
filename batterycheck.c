@@ -6,7 +6,7 @@ typedef struct {
     float min;
     float max;
     float warning_tolerance;
-    bool enable_warning;
+    bool enable_warning;  
 } ParameterConfig;
 
 ParameterConfig SoC = {20, 80, 0.05, true};
