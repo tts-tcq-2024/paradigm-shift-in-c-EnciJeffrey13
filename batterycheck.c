@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include "battery_check.h"
+#include "batterycheck.h"
 
 ParameterConfig SoC = {20, 80, 0.05, true};
 ParameterConfig Temperature = {0, 45, 0.05, true};
